@@ -92,8 +92,11 @@ Board::Board() {
 }
 
 void Board::next(int x, int y) {
-    if (x < 0 && x > this->x && y < 0 && y > this->y) throw "Out of range";
-
+    if (x < 0 || x > this->x || y < 0 || y > this->y) {
+        throw "Out of range";
+        return;
+    }
+    
     this->fieldNextType(x-1, y);
     this->fieldNextType(x-1, y-1);
     this->fieldNextType(x-1, y+1);
