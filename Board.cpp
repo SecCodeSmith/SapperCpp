@@ -5,8 +5,6 @@
 #include "Board.h"
 
 std::vector<std::vector<Field>> Board::generateBoard(int x, int y) {
-    this->x = x;
-    this->y = y;
 
     Field *empty = new Field();
     std::vector<Field> row(x);
@@ -20,23 +18,23 @@ std::vector<std::vector<Field>> Board::generateBoard(int x, int y) {
     return this->bord;
 }
 
-std::vector<std::vector<Field>> Board::generateMine(int count) {
+std::vector<std::vector<Field>> Board::generateMine(int mines, int startX, int startY) {
     struct cord {
         int x, y;
     };
     //max 80 % field is mines
-    if (count > (this->y * this->y) / 0.9) {
+    if (mines > (this->y * this->y) / 0.9) {
         throw "To many mines";
-        return;
     }
 
     std::vector<cord> minesCord;
-    this->count = count;
+    this->mines = mines;
     int i = 0;
-    while (i < count) {
+    while (i < mines) {
         cord c;
         c.y = rand() % this->y;
         c.x = rand() % this->x;
+        if (c.y == startY && c.x == startX) continue;
         bool ok = true;
         for (cord co: minesCord) {
             if (co.x == c.x && co.y == c.y) {
@@ -68,20 +66,22 @@ int Board::getY() const {
 }
 
 int Board::getCount() const {
-    return this->count;
+    return this->mines;
 }
 
 Board::~Board() {
 }
 
 Board::Board(int x, int y, int count) {
+    this->x = x;
+    this->y = y;
+    this->mines = count;
     this->generateBoard(x, y);
-    this->generateMine(count);
 }
 
 Board &Board::operator=(const Board &bord_) {
     this->bord = bord_.bord;
-    this->count = bord_.count;
+    this->mines = bord_.mines;
     this->y = bord_.y;
     this->x = bord_.x;
     return *this;
@@ -89,15 +89,9 @@ Board &Board::operator=(const Board &bord_) {
 
 Board::Board() {
     this->generateBoard(0, 0);
-    this->generateMine(0);
 }
 
 void Board::next(int x, int y) {
-    if (x < 0 || x > this->x || y < 0 || y > this->y) {
-        throw "Out of range";
-        return;
-    }
-    
     this->fieldNextType(x-1, y);
     this->fieldNextType(x-1, y-1);
     this->fieldNextType(x-1, y+1);
@@ -182,4 +176,19 @@ bool Board::checkIFWin() {
         }
     }
     return true;
+}
+
+std::ostream &operator<<(std::ostream& stream, const Board &pattern) {
+    stream << pattern.y << " " << pattern.x << " " << pattern.mines << "\n";
+    for (auto row:pattern.bord) {
+        for (auto cell:row) {
+            stream<<cell<<" ";
+        }
+        stream << "\n";
+    }
+    return stream;
+}
+
+std::istream &operator>>(std::istream& stream, Board &pattern) {
+    return stream;
 }

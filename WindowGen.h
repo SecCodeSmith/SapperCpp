@@ -2,15 +2,25 @@
 #define SAPPER_WINDOWGEN_H
 #include "SFML/Graphics.hpp"
 #include "Play.h"
+#include <iostream>
 
 class WindowGen {
 protected:
-    int x,y;
-    Play *play = new Play();
-    sf::RenderWindow *mainWindow;
+    Play* play = NULL;
 public:
-    void startWindow(bool first = true);
-    void startGame(int x, int y, int mines);
+    void setPlay(Play *play);
+    void setPlay(Play play);
+
+protected:
+    sf::RenderWindow *mainWindow;
+    sf::Font font;
+public:
+    WindowGen();
+    ~WindowGen();
+    void startWindow();
+    void startGame();
+
+    friend std::ostream& operator<<(std::ostream& stream, const WindowGen& pattern);
 };
 
 

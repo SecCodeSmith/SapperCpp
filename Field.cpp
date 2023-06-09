@@ -113,3 +113,25 @@ void Field::previousFieldType() {
     }
 }
 
+std::ostream &operator<<(std::ostream &stream, const Field &field) {
+    char type = static_cast<char>(field.type) + '0';
+    stream<<type<<static_cast<int>(field.tag);
+    return stream;
+}
+
+std::istream &operator>>(std::istream &stream, Field &field) {
+    int type;
+    int tag;
+    std::string ss;
+
+    stream >> ss;
+
+    type = static_cast<int>(ss[0] - '0');
+    tag = static_cast<int>(ss[1] - '0');
+
+    field.type = static_cast<fieldType>(type);
+    field.tag = static_cast<tags>(tag);
+
+    return stream;
+}
+

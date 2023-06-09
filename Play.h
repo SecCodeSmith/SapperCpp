@@ -6,12 +6,7 @@
 #define SAPPER_PLAY_H
 #include "Board.h"
 
-class Play {
-protected:
-    Board *board;
-public:
-    Board *getBoard() const;
-
+class Play : public Board {
 protected:
     int moveCount = 0;
     bool end = false;
@@ -25,8 +20,8 @@ public:
 protected:
     int discover(int x, int y);
 public:
-    Play(int x, int y, int mines);
-    Play();
+    Play(int x=0, int y=0, int mines=0);
+    Play(const Play& pattern);
     ~Play();
     void restart();
     bool move(int x, int y);
@@ -34,5 +29,9 @@ public:
     Play& operator=(const Play& play);
     void setEnd();
     bool getEnd() const;
+    int getMoveCount() const;
+
+    friend std::ostream& operator<<(std::ostream& stream, const Play &pattern);
+    friend std::istream&  operator>>(std::istream& stream, Play& pattern);
 };
 #endif //SAPPER_PLAY_H

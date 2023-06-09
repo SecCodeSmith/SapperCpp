@@ -4,7 +4,7 @@
 
 
 enum class tags {
-    none, discovered, flag, explosion
+    none = 0, discovered, flag, explosion, uknow
 };
 
 enum class fieldType {
@@ -32,6 +32,9 @@ public:
     Field& set(const Field& field);
     Field& set(tags tag, fieldType field);
     Field& operator=(const Field& field_);
+
+    friend std::ostream& operator<<(std::ostream& stream, const Field& field);
+    friend std::istream& operator>>(std::istream& stream, Field& field);
 };
 
 
