@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 4.1)
 project(Sapper)
 include(FetchContent)
 
@@ -15,8 +15,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 FetchContent_Declare(
         SFML
         GIT_REPOSITORY https://github.com/SFML/SFML.git
-        GIT_TAG 2.5.0
+        GIT_TAG 2.6.2
 )
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 FetchContent_MakeAvailable(SFML)
 
 

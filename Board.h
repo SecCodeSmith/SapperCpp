@@ -16,7 +16,7 @@ protected:
     void fieldNextType(int x, int y);
 public:
     std::vector<std::vector<Field>> generateBoard(int x, int y);
-    void draw(sf::RenderWindow& window, bool end);
+    void draw(sf::RenderWindow& window, bool end, int pressed_x=-1, int pressed_y=-1);
     std::vector<std::vector<Field>>& getBord();
     virtual void flag(int x, int y);
     int getX() const;

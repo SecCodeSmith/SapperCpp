@@ -103,8 +103,8 @@ void Board::next(int x, int y) {
 
 }
 
-void Board::draw(sf::RenderWindow &window, bool end) {
-    sf::RectangleShape basicCell(sf::Vector2f(15 * 4, 15 * 4));
+void Board::draw(sf::RenderWindow &window, bool end, int pressed_x, int pressed_y) {
+    sf::RectangleShape basicCell(sf::Vector2f(64, 64));
     sf::Texture icons_texture;
     sf::Sprite icon_sprite;
     icons_texture.loadFromFile("Image/Icons16.png");
@@ -114,14 +114,19 @@ void Board::draw(sf::RenderWindow &window, bool end) {
     for (int y_i = 0; y_i < this->y; y_i++) {
         for (int x_i = 0; x_i < this->x; x_i++) {
             basicCell.setPosition(sf::Vector2f(x_i * 16 * 4, y_i * 16 * 4));
+            
+            bool is_pressed = (x_i == pressed_x && y_i == pressed_y);
+            
             if ((this->bord[y_i][x_i].getTag() != tags::none && this->bord[y_i][x_i].getTag() != tags::flag)  || end) {
                 int fieldType = (int) this->bord[y_i][x_i].getType();
                 if (fieldType == -1) {
                     auto tag = this->bord[y_i][x_i].getTag();
-                    if (tag == tags::explosion)
-                        basicCell.setFillColor(sf::Color(100,0,0));
-                    else
-                        basicCell.setFillColor(sf::Color(255,0,0));
+                    if (tag == tags::explosion) {
+                        basicCell.setFillColor(sf::Color::Red);
+                    } else {
+                        basicCell.setFillColor(sf::Color(128, 0, 0));
+                    }
+                    basicCell.setOutlineThickness(0);
                     window.draw(basicCell);
                     if (tag == tags::flag)
                     {
@@ -131,7 +136,8 @@ void Board::draw(sf::RenderWindow &window, bool end) {
                     }
 
                 } else {
-                    basicCell.setFillColor(sf::Color::Cyan);
+                    basicCell.setFillColor(sf::Color(220, 220, 220)); // Revealed flat gray
+                    basicCell.setOutlineThickness(0);
                     window.draw(basicCell);
 
                     if (0 < fieldType) {
@@ -140,10 +146,19 @@ void Board::draw(sf::RenderWindow &window, bool end) {
                         window.draw(icon_sprite);
                     }
                 }
-            }else {
-                basicCell.setFillColor(sf::Color::Blue);
+            } else {
+                if (is_pressed) {
+                    basicCell.setFillColor(sf::Color(220, 220, 220)); // Pressed down appearance
+                    basicCell.setOutlineThickness(0);
+                } else {
+                    basicCell.setFillColor(sf::Color(192, 192, 192)); // Classic raised gray
+                    basicCell.setOutlineThickness(-2);
+                    basicCell.setOutlineColor(sf::Color(220, 220, 220)); // Slight highlight
+                }
                 window.draw(basicCell);
-                if (this->bord[y_i][x_i].getTag() == tags::flag) {
+                // To simulate a classic 3D button we can draw a couple lines, but a simple outline or bevel is ok.
+                
+                if (!is_pressed && this->bord[y_i][x_i].getTag() == tags::flag) {
                     icon_sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
                     icon_sprite.setPosition(static_cast<float>(x_i * 16 * 4), static_cast<float>(y_i * 16 * 4));
                     window.draw(icon_sprite);

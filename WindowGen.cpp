@@ -23,20 +23,28 @@ void WindowGen::startWindow() {
         std::string text_;
 
         sf::Text text;
-        text.setCharacterSize(64);
+        text.setCharacterSize(45);
         text.setFont(this->font);
-        text.setColor(sf::Color::Black);
+        text.setFillColor(sf::Color::Black);
 
-        sf::RectangleShape basicCell(sf::Vector2f(15 * 4, 15 * 4));
-        basicCell.setFillColor(sf::Color::Green);
-        sf::RectangleShape basicCellDouble(sf::Vector2f(15 * 4 * 2, 15 * 4));
-        basicCellDouble.setFillColor(sf::Color::Green);
-        sf::RectangleShape startButton(sf::Vector2f(15 * 4 * 3, 15 * 4));
-        startButton.setPosition(sf::Vector2f(0, 192));
-        startButton.setFillColor(sf::Color::Blue);
-        sf::RectangleShape continueButton(sf::Vector2f(15 * 4 * 5, 15 * 4));
-        continueButton.setFillColor(sf::Color::Magenta);
-        continueButton.setPosition(sf::Vector2f(16 * 4 * 3, 192));
+        sf::RectangleShape basicCell(sf::Vector2f(60, 60));
+        basicCell.setFillColor(sf::Color(192, 192, 192));
+        basicCell.setOutlineThickness(-2);
+        basicCell.setOutlineColor(sf::Color(128, 128, 128));
+        sf::RectangleShape basicCellDouble(sf::Vector2f(124, 60));
+        basicCellDouble.setFillColor(sf::Color(192, 192, 192));
+        basicCellDouble.setOutlineThickness(-2);
+        basicCellDouble.setOutlineColor(sf::Color(128, 128, 128));
+        sf::RectangleShape startButton(sf::Vector2f(188, 60));
+        startButton.setPosition(sf::Vector2f(2, 194));
+        startButton.setFillColor(sf::Color(160, 200, 160));
+        startButton.setOutlineThickness(-2);
+        startButton.setOutlineColor(sf::Color(128, 128, 128));
+        sf::RectangleShape continueButton(sf::Vector2f(316, 60));
+        continueButton.setFillColor(sf::Color(160, 160, 200));
+        continueButton.setPosition(sf::Vector2f(194, 194));
+        continueButton.setOutlineThickness(-2);
+        continueButton.setOutlineColor(sf::Color(128, 128, 128));
         while (windowStart->isOpen()) {
 
             unsigned int mouse_cell_x = std::clamp(
@@ -129,15 +137,15 @@ void WindowGen::startWindow() {
                             switch (mouse_cell_x)
                             {
                             case 3:
-                                if (mines + 1 <= (x * y) / 100 * 40)
+                                if (mines + 1 <= (x * y * 40) / 100)
                                     mines++;
                                 break;
                             case 4:
                             case 5:
-                                if (mines + 10 <= (x * y) / 100 * 40)
+                                if (mines + 10 <= (x * y * 40) / 100)
                                     mines += 10;
                                 else
-                                    mines = (x * y) / 100 * 40;
+                                    mines = (x * y * 40) / 100;
                                 break;
                             case 6:
                                 if (mines - 1 >= 1)
@@ -167,8 +175,17 @@ void WindowGen::startWindow() {
                         default:
                             break;
                         }
-                        if (mines > (x * y) / 100 * 40)
-                            mines = ((x * y) / 100 * 40)+1;
+                        
+                        {
+                            int max_mines = (x * y * 40) / 100;
+                            if (max_mines < 1) max_mines = 1;
+                            
+                            if (mines > max_mines)
+                                mines = max_mines;
+                                
+                            if (mines < 1)
+                                mines = 1;
+                        }
                         break;
 
                     default:
@@ -182,60 +199,106 @@ void WindowGen::startWindow() {
             }
 
 
-            windowStart->clear(sf::Color::Cyan);
+            windowStart->clear(sf::Color(220, 220, 220));
 
-            text_ = "X:" + std::to_string(x);
-
+            text_ = "X: " + std::to_string(x);
             text.setString(text_);
-            text.setPosition(sf::Vector2f(0, 0));
-
-            text_ = "Y:" + std::to_string(y);
-
+            text.setPosition(sf::Vector2f(10, 4));
             windowStart->draw(text);
 
+            text_ = "Y: " + std::to_string(y);
             text.setString(text_);
-            text.setPosition(sf::Vector2f(0, 64));
-
-            text_ = "M:" + std::to_string(mines);
+            text.setPosition(sf::Vector2f(10, 68));
             windowStart->draw(text);
 
+            text_ = "M: " + std::to_string(mines);
             text.setString(text_);
-            text.setPosition(sf::Vector2f(0, 128));
+            text.setPosition(sf::Vector2f(10, 132));
             windowStart->draw(text);
 
+            bool isLMB = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
+            if (isLMB && mouse_cell_y == 3 && mouse_cell_x >= 0 && mouse_cell_x <= 2) {
+                startButton.setFillColor(sf::Color(140, 180, 140));
+                startButton.setOutlineThickness(0);
+            } else {
+                startButton.setFillColor(sf::Color(160, 200, 160));
+                startButton.setOutlineThickness(-2);
+            }
             windowStart->draw(startButton); //start button
-            text.setPosition(sf::Vector2f(0, 182));
+            text.setPosition(sf::Vector2f(10, 196));
             text.setString("Start");
             windowStart->draw(text);
 
             if (this->play != NULL){
+                if (isLMB && mouse_cell_y == 3 && mouse_cell_x >= 3 && mouse_cell_x <= 7) {
+                    continueButton.setFillColor(sf::Color(140, 140, 180));
+                    continueButton.setOutlineThickness(0);
+                } else {
+                    continueButton.setFillColor(sf::Color(160, 160, 200));
+                    continueButton.setOutlineThickness(-2);
+                }
                 windowStart->draw(continueButton);
-                text.setPosition(sf::Vector2f(16 * 4 * 3, 182));
+                text.setPosition(sf::Vector2f(202, 196));
                 text.setString("Continue");
                 windowStart->draw(text);
             }
 
 
             for (int i = 0; i < 3; i++) {
-                basicCell.setPosition(sf::Vector2f(192, 64 * i));
+                bool lmb_row = isLMB && mouse_cell_y == i;
+                float y_pos = 64 * i + 2;
+
+                basicCell.setPosition(sf::Vector2f(194, y_pos));
+                if (lmb_row && mouse_cell_x == 3) {
+                    basicCell.setFillColor(sf::Color(170, 170, 170));
+                    basicCell.setOutlineThickness(0);
+                } else {
+                    basicCell.setFillColor(sf::Color(192, 192, 192));
+                    basicCell.setOutlineThickness(-2);
+                }
                 windowStart->draw(basicCell);
                 text.setString("+1");
-                text.setPosition(sf::Vector2f(192, 64 * i - 5));
+                text.setPosition(sf::Vector2f(198, y_pos + 2));
                 windowStart->draw(text);
-                basicCellDouble.setPosition(sf::Vector2f(256, 64 * i));
+
+                basicCellDouble.setPosition(sf::Vector2f(258, y_pos));
+                if (lmb_row && (mouse_cell_x == 4 || mouse_cell_x == 5)) {
+                    basicCellDouble.setFillColor(sf::Color(170, 170, 170));
+                    basicCellDouble.setOutlineThickness(0);
+                } else {
+                    basicCellDouble.setFillColor(sf::Color(192, 192, 192));
+                    basicCellDouble.setOutlineThickness(-2);
+                }
                 windowStart->draw(basicCellDouble);
                 text.setString("+10");
-                text.setPosition(sf::Vector2f(256, 64 * i - 5));
+                text.setPosition(sf::Vector2f(262, y_pos + 2));
                 windowStart->draw(text);
-                basicCell.setPosition(sf::Vector2f(320 + 64, 64 * i));
+
+                basicCell.setPosition(sf::Vector2f(386, y_pos));
+                if (lmb_row && mouse_cell_x == 6) {
+                    basicCell.setFillColor(sf::Color(170, 170, 170));
+                    basicCell.setOutlineThickness(0);
+                } else {
+                    basicCell.setFillColor(sf::Color(192, 192, 192));
+                    basicCell.setOutlineThickness(-2);
+                }
                 windowStart->draw(basicCell);
                 text.setString("-1");
-                text.setPosition(sf::Vector2f(320 + 64, 64 * i - 5));
+                text.setPosition(sf::Vector2f(390, y_pos + 2));
                 windowStart->draw(text);
-                basicCellDouble.setPosition(sf::Vector2f(384 + 64, 64 * i));
+
+                basicCellDouble.setPosition(sf::Vector2f(450, y_pos));
+                if (lmb_row && (mouse_cell_x == 7 || mouse_cell_x == 8)) {
+                    basicCellDouble.setFillColor(sf::Color(170, 170, 170));
+                    basicCellDouble.setOutlineThickness(0);
+                } else {
+                    basicCellDouble.setFillColor(sf::Color(192, 192, 192));
+                    basicCellDouble.setOutlineThickness(-2);
+                }
                 windowStart->draw(basicCellDouble);
                 text.setString("-10");
-                text.setPosition(sf::Vector2f(384 + 64, 64 * i - 5));
+                text.setPosition(sf::Vector2f(454, y_pos + 2));
                 windowStart->draw(text);
 
             }
@@ -263,10 +326,10 @@ void WindowGen::startGame() {
     sf::Event event;
 
     sf::Text text;
-    text.setCharacterSize(64);
+    text.setCharacterSize(48);
     text.setFont(this->font);
-    text.setColor(sf::Color::Blue);
-    text.setPosition(play->getX(), (play->getY())*64);
+    text.setFillColor(sf::Color::Blue);
+    text.setPosition(10, (play->getY())*64 + 4);
 
     while (this->mainWindow->isOpen()) {
         unsigned int mouse_cell_x = std::clamp(
@@ -335,9 +398,16 @@ void WindowGen::startGame() {
         {
             Alexander_state = 3;
         }
+        int pressed_x = -1;
+        int pressed_y = -1;
+        if (1 == sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            pressed_x = mouse_cell_x;
+            pressed_y = mouse_cell_y;
+        }
+
         if (this->mainWindow->isOpen()) {
-            this->mainWindow->clear(sf::Color::Black);
-            this->play->draw(*this->mainWindow, this->play->getEnd());
+            this->mainWindow->clear(sf::Color(128, 128, 128)); // classic gray background
+            this->play->draw(*this->mainWindow, this->play->getEnd(), pressed_x, pressed_y);
             Alexander.setTextureRect(sf::IntRect(Alexander_state * Alexander_texture.getSize().y, 0, Alexander_texture.getSize().y, Alexander_texture.getSize().y));
 
             text.setString("Moves: " + std::to_string(this->play->getMoveCount()));
