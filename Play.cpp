@@ -51,8 +51,10 @@ bool Play::move(int x, int y) {
     start.x = x;
     start.y = y;
 
-    if (this->bord[y][x].getType() == fieldType::none)
+    if (this->bord[y][x].getType() == fieldType::none) {
+        this->bord[y][x].setTag(tags::discovered);
         nones.push_back(start);
+    }
     else {
         if (this->bord[y][x].getType() != fieldType::mine ) {
             this->bord[y][x].setTag(tags::discovered);
@@ -132,6 +134,7 @@ int Play::discover(int x, int y) {
 
     if (this->bord[y][x].getType() == fieldType::none &&
         this->bord[y][x].getTag() == tags::none) {
+        this->bord[y][x].setTag(tags::discovered);
         return 1;
     };
     if (1 <= static_cast<int>(this->bord[y][x].getType()) && static_cast<int>(this->bord[y][x].getType()) <= 8) {
@@ -153,6 +156,7 @@ Play &Play::operator=(const Play &play) {
 
 void Play::restart() {
     this->end = false;
+    this->win = false;
     this->generateBoard(this->x, this->y);
     this->moveCount = 0;
 }

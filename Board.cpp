@@ -23,8 +23,8 @@ std::vector<std::vector<Field>> Board::generateMine(int mines, int startX, int s
         int x, y;
     };
     //max 80 % field is mines
-    if (mines > (this->y * this->y) / 0.9) {
-        throw "To many mines";
+    if (mines > (this->x * this->y * 80) / 100) {
+        throw "Too many mines";
     }
 
     std::vector<cord> minesCord;

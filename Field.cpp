@@ -70,6 +70,7 @@ void Field::nextFieldType() {
             break;
         case fieldType::seven:
             this->type = fieldType::eight;
+            break;
         case fieldType::eight:
             this->type = fieldType::none;
             break;
@@ -104,6 +105,7 @@ void Field::previousFieldType() {
             break;
         case fieldType::seven:
             this->type = fieldType::six;
+            break;
         case fieldType::eight:
             this->type = fieldType::seven;
             break;
